@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "gulpfile.js",
+  "engines": {
+    "node": "8.4.0"
+  },
   "scripts": {
     "start": "node app.js",
     "watch": "gulp watch",
