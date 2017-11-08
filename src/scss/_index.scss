@@ -1,0 +1,35 @@
+html,
+body {
+  font-family: 'Lato', sans-serif;
+}
+
+main {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+}
+
+button[disabled] {
+  background: #ccc;
+  border-color: #ccc;
+  text-shadow: none;
+  cursor: default;
+
+  &:hover {
+    background: #ccc;
+    border-color: #ccc;
+  }
+}
+
+#form {
+}
+
+#input {
+  display: block;
+  padding: 1.5rem;
+  width: 100%;
+  font-size: 2.4rem;
+}
+
+#submit {
+  float: right;
+}

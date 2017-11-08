@@ -1,0 +1,12 @@
+extends layout.pug
+
+block content
+  div.container
+    h1 Lyrebird Test
+    form#form
+      input#input
+      button#submit.button-primary(disabled) Submit
+
+block footer_scripts
+  script(src='js/lib/jquery.min.js')
+  script(src='js/main.bundle.js')
