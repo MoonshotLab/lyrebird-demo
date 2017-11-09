@@ -25,6 +25,7 @@
     "gulp": "^3.9.1",
     "lowdb": "^1.0.0",
     "npm-run-all": "^4.0.2",
+    "nprogress": "^0.2.0",
     "path": "^0.12.7",
     "pug": "^2.0.0-beta11",
     "puppeteer": "^0.12.0"

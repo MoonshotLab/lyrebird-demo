@@ -1,3 +1,5 @@
+const NProgress = require('nprogress');
+
 const $form = $('#form');
 const $input = $('#input');
 const $submitButton = $('#submit');
@@ -24,15 +26,18 @@ function setupFormSubmit() {
     const text = $input.val();
 
     if (!!text && text.length > 0) {
+      NProgress.start();
       $.post('/generate', {
         text: $input.val()
       })
         .then(res => {
+          NProgress.done();
           console.log('playing', res);
           playFromUrl(res);
           $input.val('');
         })
         .catch(e => {
+          NProgress.done();
           console.log('e', e);
         });
     }
