@@ -27,8 +27,13 @@ function setupFormSubmit() {
 
     if (!!text && text.length > 0) {
       NProgress.start();
-      $.post('/generate', {
-        text: $input.val()
+      $.ajax({
+        type: 'POST',
+        url: '/generate',
+        data: {
+          text: $input.val()
+        },
+        timeout: 15 * 1000
       })
         .then(res => {
           NProgress.done();
