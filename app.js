@@ -13,6 +13,8 @@ app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+require('./lib/db').initializeDb();
+
 const port = process.env.PORT || 3000;
 http.listen(port, () => {
   console.log('Server running on port ' + port);

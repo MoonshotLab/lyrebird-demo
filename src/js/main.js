@@ -2,6 +2,11 @@ const $form = $('#form');
 const $input = $('#input');
 const $submitButton = $('#submit');
 
+function playFromUrl(url) {
+  const sound = new Audio(url);
+  sound.play();
+}
+
 function setupInputChange() {
   $input.on('keyup', function(e) {
     const $this = $(this);
@@ -23,7 +28,8 @@ function setupFormSubmit() {
         text: $input.val()
       })
         .then(res => {
-          console.log('res', res);
+          console.log('playing', res);
+          playFromUrl(res);
           $input.val('');
         })
         .catch(e => {
