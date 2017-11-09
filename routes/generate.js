@@ -40,10 +40,6 @@ function generateLyrebirdUrlFromText(inputText) {
 
       await page.goto(VOICE_URL);
 
-      // sanity check
-      let html = await page.evaluate(() => document.body.innerHTML);
-      console.log(html);
-
       await page.waitForSelector(VOICE_INPUT_SELECTOR);
 
       await page.click(VOICE_INPUT_SELECTOR);
