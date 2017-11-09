@@ -40,6 +40,8 @@ function generateLyrebirdUrlFromText(inputText) {
 
       await page.goto(VOICE_URL);
 
+      await page.waitForSelector(VOICE_INPUT_SELECTOR);
+
       await page.click(VOICE_INPUT_SELECTOR);
       await page.keyboard.type(inputText);
 
