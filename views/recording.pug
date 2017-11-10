@@ -3,8 +3,11 @@ extends layout.pug
 block content
   div.container
     div.row
-      h3
-        a(href="/") ←
+      h5.nav
+        span.left
+          a(href="/") home
+        span.right
+          a(href="/recordings/all") all
       h3= `"${utterance.text}"`
       audio(controls src=utterance.audio_file)
       div.recording-info

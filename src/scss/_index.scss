@@ -54,3 +54,20 @@ audio {
     margin-bottom: 1em;
   }
 }
+
+.nav {
+  overflow: hidden;
+}
+
+.left,
+.right {
+  display: inline-block;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}

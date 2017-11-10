@@ -5,6 +5,12 @@ const moment = require('moment');
 
 const db = require('./../lib/db');
 
+router.get('/all', (req, res) => {
+  res.render('all', {
+    utterances: db.getAllUtterances()
+  });
+});
+
 router.get('/:id', (req, res) => {
   const utterance = db.getUtteranceById(req.params.id);
   if (!!req.params.id) {
