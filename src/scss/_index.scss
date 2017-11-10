@@ -20,6 +20,11 @@ button[disabled] {
   }
 }
 
+audio {
+  display: block;
+  width: 100%;
+}
+
 #form {
 }
 
@@ -32,4 +37,16 @@ button[disabled] {
 
 #submit {
   float: right;
+}
+
+#recording-history {
+  display: none;
+}
+
+.recording-info {
+  margin-top: 2rem;
+
+  p {
+    margin-bottom: 1em;
+  }
 }

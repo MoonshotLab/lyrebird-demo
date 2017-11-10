@@ -6,7 +6,7 @@ const router = express.Router();
 
 const db = require('./../lib/db');
 
-function generateLyrebirdUrlFromText(inputText) {
+function generateLyrebirdUtteranceFromText(inputText) {
   return new Promise(async (resolve, reject) => {
     try {
       const timeStart = new Date();
@@ -60,7 +60,7 @@ function generateLyrebirdUrlFromText(inputText) {
               ) {
                 const utterance = response[0].utterance;
                 db.logUtterance(utterance);
-                resolve(utterance.audio_file);
+                resolve(utterance);
               } else {
                 reject(new Error('invalid response'));
               }
@@ -98,7 +98,7 @@ function generateLyrebirdUrlFromText(inputText) {
 router.post('/', (req, res) => {
   if (!!req.body && !!req.body.text && req.body.text.length > 0) {
     const phrase = req.body.text;
-    generateLyrebirdUrlFromText(phrase)
+    generateLyrebirdUtteranceFromText(phrase)
       .then(url => {
         res.status(200).send(url);
       })

@@ -3,6 +3,16 @@ const NProgress = require('nprogress');
 const $form = $('#form');
 const $input = $('#input');
 const $submitButton = $('#submit');
+const $historySection = $('#recording-history');
+const $historyList = $('#history-list');
+
+function addUtteranceToHistory(utterance) {
+  $historySection.show();
+
+  $historyList.prepend(
+    `<li><a href="/recordings/${utterance.id}" target="_blank">"${utterance.text}"</a></li>`
+  );
+}
 
 function playFromUrl(url) {
   const sound = new Audio(url);
@@ -37,9 +47,11 @@ function setupFormSubmit() {
       })
         .then(res => {
           NProgress.done();
-          console.log('playing', res);
-          playFromUrl(res);
+
+          playFromUrl(res.audio_file);
           $input.val('');
+
+          addUtteranceToHistory(res);
         })
         .catch(e => {
           NProgress.done();

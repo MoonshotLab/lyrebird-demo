@@ -22,6 +22,7 @@ http.listen(port, () => {
 
 app.use('/', require('./routes/index'));
 app.use('/generate', require('./routes/generate'));
+app.use('/recordings', require('./routes/recordings'));
 app.use('*', (req, res) => {
   res.redirect('/');
 });

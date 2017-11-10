@@ -1,0 +1,16 @@
+extends layout.pug
+
+block content
+  div.container
+    div.row
+      h3
+        a(href="/") ←
+      h3= `"${utterance.text}"`
+      audio(controls src=utterance.audio_file)
+      div.recording-info
+        p= `Created: ${date}`
+        a(href=utterance.share_url target="_blank") Lyrebird Share Link
+
+block footer_scripts
+  script(src='/js/lib/jquery.min.js')
+  script(src='/js/main.bundle.js')

@@ -5,11 +5,15 @@ block header_scripts
 
 block content
   div.container
-    h1 Lyrebird Test
-    form#form
-      input#input
-      button#submit.button-primary(disabled) Submit
+    div.row
+      h1 Lyrebird Test
+      form#form
+        input#input
+        button#submit.button-primary(disabled) Submit
+    div.row#recording-history
+      h2 History
+      ul#history-list
 
 block footer_scripts
-  script(src='js/lib/jquery.min.js')
-  script(src='js/main.bundle.js')
+  script(src='/js/lib/jquery.min.js')
+  script(src='/js/main.bundle.js')
