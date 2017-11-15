@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const app = require('./../app');
 
 router.get('/', (req, res) => {
   res.render('index', {
-    bodyId: 'index'
+    bodyId: 'index',
+    foo: app.locals.foo
   });
 });
 
