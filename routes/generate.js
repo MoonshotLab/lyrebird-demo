@@ -96,7 +96,12 @@ function generateLyrebirdUtteranceFromText(inputText) {
 }
 
 router.post('/', (req, res) => {
-  if (!!req.body && !!req.body.text && req.body.text.length > 0) {
+  if (
+    !!req.body &&
+    !!req.body.text &&
+    req.body.text.length > 0 &&
+    !!process.env.AUTH_CODE
+  ) {
     const phrase = req.body.text;
     generateLyrebirdUtteranceFromText(phrase)
       .then(url => {
@@ -110,6 +115,10 @@ router.post('/', (req, res) => {
     console.log('invalid request');
     res.sendStatus(500);
   }
+});
+
+router.get('/', (req, res) => {
+  res.send('hi');
 });
 
 module.exports = router;

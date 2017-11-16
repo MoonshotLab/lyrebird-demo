@@ -7,16 +7,6 @@ const http = require('http').Server(app);
 const bodyParser = require('body-parser');
 const path = require('path');
 
-require('./lib/lyrebird')
-  .getOrRefreshAccessToken()
-  .then(() => {
-    console.log('getOrRefreshAccessToken success');
-  })
-  .catch(e => {
-    console.log('getOrRefreshAccessToken error');
-    console.log(e);
-  });
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -31,11 +21,19 @@ http.listen(port, () => {
 });
 
 module.exports = app;
-
 app.use('/', require('./routes/index'));
+app.use('/auth', require('./routes/auth'));
 app.use('/generate', require('./routes/generate'));
 app.use('/recordings', require('./routes/recordings'));
-app.use('/auth', require('./routes/auth'));
 app.use('*', (req, res) => {
   res.redirect('/');
 });
+
+require('./lib/lyrebird')
+  .getOrRefreshAccessToken()
+  .then(() => {
+    console.log('Access token got');
+  })
+  .catch(e => {
+    console.log('Access token error', e);
+  });

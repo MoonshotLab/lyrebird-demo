@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     if (!!req.query && !!req.query.code) {
       process.env.AUTH_CODE = req.query.code;
       lyrebird
-        .getAccessToken()
+        .postAuthCodeToLyrebird()
         .then(tokenData => {
           const now = moment();
 
