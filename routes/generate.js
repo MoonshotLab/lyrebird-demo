@@ -1,12 +1,50 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
 const Promise = require('bluebird');
+const axios = require('axios');
 
 const router = express.Router();
 
 const db = require('./../lib/db');
 
 function generateLyrebirdUtteranceFromText(inputText) {
+  return new Promise((resolve, reject) => {
+    if (!!process.env.ACCESS_TOKEN) {
+      axios({
+        method: 'post',
+        url: 'https://lyrebird.ai/api/generate/',
+        data: {
+          texts: [inputText]
+        },
+        headers: {
+          Authorization: `${process.env.TOKEN_TYPE} ${
+            process.env.ACCESS_TOKEN
+          }`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json; indent=4'
+        }
+      })
+        .then(lyrebirdRes => {
+          // data is an array, but since we just passed in one text, we only care about the first
+          if (
+            lyrebirdRes.data[0].status === 'success' &&
+            !!lyrebirdRes.data[0].utterance
+          ) {
+            resolve(lyrebirdRes.data[0].utterance);
+          } else {
+            reject(new Error('response unsuccessful'));
+          }
+        })
+        .catch(e => {
+          reject(e);
+        });
+    } else {
+      reject(new Error('unset access token'));
+    }
+  });
+}
+
+function puppeteerGenerateLyrebirdUtteranceFromText(inputText) {
   return new Promise(async (resolve, reject) => {
     try {
       const timeStart = new Date();
@@ -104,8 +142,8 @@ router.post('/', (req, res) => {
   ) {
     const phrase = req.body.text;
     generateLyrebirdUtteranceFromText(phrase)
-      .then(url => {
-        res.status(200).send(url);
+      .then(lyrebirdRes => {
+        res.status(200).send(lyrebirdRes);
       })
       .catch(e => {
         console.log(e);

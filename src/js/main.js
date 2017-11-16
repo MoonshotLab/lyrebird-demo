@@ -10,7 +10,9 @@ function addUtteranceToHistory(utterance) {
   $historySection.show();
 
   $historyList.prepend(
-    `<li><a href="/recordings/${utterance.id}" target="_blank">"${utterance.text}"</a></li>`
+    `<li><a href="/recordings/${utterance.id}" target="_blank">"${
+      utterance.text
+    }"</a></li>`
   );
 }
 
