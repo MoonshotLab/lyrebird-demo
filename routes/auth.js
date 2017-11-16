@@ -13,10 +13,10 @@ router.get('/', async (req, res) => {
       lyrebird
         .postAuthCodeToLyrebird()
         .then(tokenData => {
-          const auth = auth.getAuthFromTokenData(tokenData);
+          const authObj = auth.getAuthFromTokenData(tokenData);
 
-          db.setAuth(auth);
-          auth.setAuthProcessVars(auth);
+          db.setAuth(authObj);
+          auth.setAuthProcessVars(authObj);
 
           res.status(200).send({ killBrowser: true });
         })
