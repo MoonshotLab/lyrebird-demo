@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const app = require('./../app');
-const moment = require('moment');
 
 const lyrebird = require('./../lib/lyrebird');
+const db = require('./../lib/db');
+const auth = require('./../lib/auth');
 
 router.get('/', async (req, res) => {
   try {
@@ -12,16 +13,10 @@ router.get('/', async (req, res) => {
       lyrebird
         .postAuthCodeToLyrebird()
         .then(tokenData => {
-          const now = moment();
+          const auth = auth.getAuthFromTokenData(tokenData);
 
-          process.env.ACCESS_TOKEN = tokenData.access_token;
-          process.env.TOKEN_TYPE = tokenData.token_type;
-          process.env.TOKEN_SCOPE = tokenData.scope;
-          process.env.REFRESH_TOKEN = tokenData.refresh_token;
-          process.env.ACCESS_TOKEN_TIMESTAMP = now;
-          process.env.ACCESS_TOKEN_EXPIRATION = moment(
-            now + tokenData.expires_in * 1000
-          ); // expires_in is in seconds, moment works in ms
+          db.setAuth(auth);
+          auth.setAuthProcessVars(auth);
 
           res.status(200).send({ killBrowser: true });
         })

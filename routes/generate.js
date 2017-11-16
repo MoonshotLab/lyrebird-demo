@@ -6,6 +6,9 @@ const axios = require('axios');
 const router = express.Router();
 
 const db = require('./../lib/db');
+const _ = db._; // lodash
+
+const sentenceCase = require('sentence-case');
 
 function generateLyrebirdUtteranceFromText(inputText) {
   return new Promise((resolve, reject) => {
@@ -138,25 +141,33 @@ router.post('/', (req, res) => {
     !!req.body &&
     !!req.body.text &&
     req.body.text.length > 0 &&
-    !!process.env.AUTH_CODE
+    !!process.env.ACCESS_TOKEN
   ) {
-    const phrase = req.body.text;
-    generateLyrebirdUtteranceFromText(phrase)
-      .then(lyrebirdRes => {
-        res.status(200).send(lyrebirdRes);
-      })
-      .catch(e => {
-        console.log(e);
-        res.sendStatus(500);
-      });
+    const phrase = sentenceCase(req.body.text);
+
+    // check if utterance is already in db
+    const dbUtterance = db.getUtteranceByText(phrase);
+
+    if (!!dbUtterance) {
+      // utterance in db
+      console.log(`Utterance "${phrase}" already in DB.`);
+      res.status(200).send(dbUtterance);
+    } else {
+      // new utterance, hit lyrebird api
+      console.log(`Utterance "${phrase}" is new, generate via Lyrebird.`);
+      generateLyrebirdUtteranceFromText(phrase)
+        .then(utterance => {
+          db.logUtterance(utterance);
+          res.status(200).send(utterance);
+        })
+        .catch(e => {
+          console.log(e);
+          res.sendStatus(500);
+        });
+    }
   } else {
-    console.log('invalid request');
     res.sendStatus(500);
   }
-});
-
-router.get('/', (req, res) => {
-  res.send('hi');
 });
 
 module.exports = router;

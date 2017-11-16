@@ -7,10 +7,13 @@ block content
   div.container
     div.row
       h1 All Recordings
-      ul
-        for utterance in utterances
-          li
-            a(href=`/recordings/${utterance.id}` target="_blank")= `"${utterance.text}"`
+      if utterances && utterances.length > 0
+        ul
+          for utterance in utterances
+            li
+              a(href=`/recordings/${utterance.id}` target="_blank")= `"${utterance.text}"`
+      else
+        h4 None so far
 
 block footer_scripts
   script(src='/js/lib/jquery.min.js')

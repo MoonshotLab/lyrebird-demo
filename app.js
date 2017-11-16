@@ -29,11 +29,4 @@ app.use('*', (req, res) => {
   res.redirect('/');
 });
 
-require('./lib/lyrebird')
-  .getOrRefreshAccessToken()
-  .then(() => {
-    console.log('Access token got');
-  })
-  .catch(e => {
-    console.log('Access token error', e);
-  });
+require('./lib/auth').makeSureAuthIsFresh();
