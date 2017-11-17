@@ -162,11 +162,11 @@ router.post('/', (req, res) => {
         })
         .catch(e => {
           console.log(e);
-          res.sendStatus(500);
+          res.status(500).send(e);
         });
     }
   } else {
-    res.sendStatus(500);
+    res.status(500).send(new Error('text and access_token must be set'));
   }
 });
 
