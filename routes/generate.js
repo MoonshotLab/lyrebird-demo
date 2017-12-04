@@ -161,7 +161,12 @@ router.post('/', (req, res) => {
           res.status(200).send(utterance);
         })
         .catch(e => {
-          console.log(e);
+          if (!!e.data && !!e.data.detail) {
+            console.log(e.data.detail);
+          } else {
+            console.log(e);
+          }
+
           res.status(500).send(e);
         });
     }
