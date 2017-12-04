@@ -6,9 +6,9 @@ const axios = require('axios');
 const router = express.Router();
 
 const db = require('./../lib/db');
-const _ = db._; // lodash
+const util = require('./../lib/util');
 
-const sentenceCase = require('sentence-case');
+const _ = db._; // lodash
 
 function generateLyrebirdUtteranceFromText(inputText) {
   return new Promise((resolve, reject) => {
@@ -143,7 +143,9 @@ router.post('/', (req, res) => {
     req.body.text.length > 0 &&
     !!process.env.ACCESS_TOKEN
   ) {
-    const phrase = sentenceCase(req.body.text);
+    console.log(req.body.text);
+    const phrase = util.sentenceCase(req.body.text);
+    console.log(phrase);
 
     // check if utterance is already in db
     const dbUtterance = db.getUtteranceByText(phrase);

@@ -43,7 +43,7 @@ function setupFormSubmit() {
         type: 'POST',
         url: '/generate',
         data: {
-          text: $input.val()
+          text: text
         },
         timeout: 15 * 1000
       })

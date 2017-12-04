@@ -24,14 +24,14 @@
     "express-graceful-exit": "^0.4.0",
     "fs": "0.0.1-security",
     "gulp": "^3.9.1",
+    "lodash": "^4.17.4",
     "lowdb": "^1.0.0",
     "moment": "^2.19.2",
     "npm-run-all": "^4.0.2",
     "nprogress": "^0.2.0",
     "path": "^0.12.7",
     "pug": "^2.0.0-beta11",
-    "puppeteer": "^0.12.0",
-    "sentence-case": "^2.1.1"
+    "puppeteer": "^0.12.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.7",
