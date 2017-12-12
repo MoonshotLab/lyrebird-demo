@@ -66,7 +66,7 @@ function setupFormSubmit() {
         })
         .catch(e => {
           NProgress.done();
-          console.log('e', e);
+          console.log(e);
         });
     }
   });

@@ -173,7 +173,10 @@ router.post('/', (req, res) => {
         });
     }
   } else {
-    res.status(500).send(new Error('text and access_token must be set'));
+    console.log('text and access token must be set');
+    console.log('req.body', req.body);
+    console.log('process.env.ACCESS_TOKEN', process.env.ACCESS_TOKEN);
+    res.sendStatus(500);
   }
 });
 
