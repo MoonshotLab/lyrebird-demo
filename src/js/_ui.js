@@ -13,7 +13,7 @@ const $historyList = $('#history-list');
 const $cameraRoot = $('#camera-root');
 
 let screensaverTimeout = null;
-let screensaverTimeoutLength = 5 * 1000; // ms
+let screensaverTimeoutLength = 30 * 1000; // ms
 
 function addUtteranceToHistory(utterance) {
   $historySection.show();
