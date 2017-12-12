@@ -5,11 +5,13 @@ const app = express();
 const http = require('http').Server(app);
 
 const bodyParser = require('body-parser');
+const autoReap = require('multer-autoreap');
 const path = require('path');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+app.use(autoReap);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 

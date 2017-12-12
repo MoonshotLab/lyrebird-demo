@@ -2,6 +2,7 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const Promise = require('bluebird');
 const axios = require('axios');
+const upload = require('multer')({ dest: '/tmp/' });
 
 const router = express.Router();
 
@@ -9,6 +10,17 @@ const db = require('./../lib/db');
 const util = require('./../lib/util');
 
 const _ = db._; // lodash
+
+const uploadFieldSpec = [
+  {
+    name: 'blob',
+    maxCount: 1
+  },
+  {
+    name: 'text',
+    maxCount: 1
+  }
+];
 
 function generateLyrebirdUtteranceFromText(inputText) {
   return new Promise((resolve, reject) => {
@@ -136,16 +148,12 @@ function puppeteerGenerateLyrebirdUtteranceFromText(inputText) {
   });
 }
 
-router.post('/', (req, res) => {
-  if (
-    !!req.body &&
-    !!req.body.text &&
-    req.body.text.length > 0 &&
-    !!process.env.ACCESS_TOKEN
-  ) {
-    console.log(req.body.text);
+router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
+  if (!!process.env.ACCESS_TOKEN && !!req.body.text && !!req.files.blob) {
     const phrase = util.sentenceCase(req.body.text);
     console.log(phrase);
+
+    // DO SOMETHING WITH BLOB!!!
 
     // check if utterance is already in db
     const dbUtterance = db.getUtteranceByText(phrase);

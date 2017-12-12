@@ -1,5 +1,6 @@
 const NProgress = require('nprogress');
 const Promise = require('bluebird');
+const download = require('downloadjs');
 
 const screensaver = require('./_screensaver');
 const video = require('./_video');
@@ -11,6 +12,7 @@ const $historySection = $('#recording-history');
 const $historyList = $('#history-list');
 
 const $cameraRoot = $('#camera-root');
+let $cameraCanvas;
 
 let screensaverTimeout = null;
 let screensaverTimeoutLength = 30 * 1000; // ms
@@ -41,6 +43,21 @@ function setupInputChange() {
   });
 }
 
+function makeGenerateCall(text, frame) {
+  const formData = new FormData();
+  formData.append('blob', frame.blob);
+  formData.append('text', text);
+
+  return $.ajax({
+    type: 'POST',
+    url: '/generate',
+    data: formData,
+    processData: false,
+    contentType: false,
+    timeout: 15 * 1000
+  });
+}
+
 function setupFormSubmit() {
   $form.on('submit', function(e) {
     e.preventDefault();
@@ -48,14 +65,11 @@ function setupFormSubmit() {
 
     if (!!text && text.length > 0) {
       NProgress.start();
-      $.ajax({
-        type: 'POST',
-        url: '/generate',
-        data: {
-          text: text
-        },
-        timeout: 15 * 1000
-      })
+
+      takeScreenshot()
+        .then(frame => {
+          return makeGenerateCall(text, frame);
+        })
         .then(res => {
           NProgress.done();
 
@@ -97,6 +111,18 @@ function goToSleep() {
 
 function wakeUp() {
   screensaver.stop();
+}
+
+let count = 0;
+function takeScreenshot() {
+  return new Promise((resolve, reject) => {
+    try {
+      const frame = captureVideoFrame('face_video', 'png');
+      resolve(frame);
+    } catch (e) {
+      reject(e);
+    }
+  });
 }
 
 export function asyncInit() {
