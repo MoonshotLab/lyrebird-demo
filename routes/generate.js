@@ -148,6 +148,16 @@ function puppeteerGenerateLyrebirdUtteranceFromText(inputText) {
   });
 }
 
+router.post('/test', (req, res) => {
+  generateLyrebirdUtteranceFromText('test')
+    .then(utterance => {
+      res.sendStatus(200);
+    })
+    .catch(e => {
+      res.sendStatus(500);
+    });
+});
+
 router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
   if (!!process.env.ACCESS_TOKEN && !!req.body.text && !!req.files.blob) {
     const phrase = util.sentenceCase(req.body.text);
