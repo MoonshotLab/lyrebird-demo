@@ -17,16 +17,6 @@ let $cameraCanvas;
 let screensaverTimeout = null;
 let screensaverTimeoutLength = 30 * 1000; // ms
 
-function addUtteranceToHistory(utterance) {
-  $historySection.show();
-
-  $historyList.prepend(
-    `<li><a href="/recordings/${utterance.id}" target="_blank">"${
-      utterance.text
-    }"</a></li>`
-  );
-}
-
 function playFromUrl(url) {
   const sound = new Audio(url);
   sound.play();
@@ -75,8 +65,6 @@ function setupFormSubmit() {
 
           playFromUrl(res.audio_file);
           $input.val('');
-
-          addUtteranceToHistory(res);
         })
         .catch(e => {
           NProgress.done();
