@@ -2,7 +2,12 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const Promise = require('bluebird');
 const axios = require('axios');
+const moment = require('moment');
 const upload = require('multer')({ dest: '/tmp/' });
+const s3 = require('aws-s3-promisified')({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_ACCESS_SECRET
+});
 
 const router = express.Router();
 
@@ -148,6 +153,7 @@ function puppeteerGenerateLyrebirdUtteranceFromText(inputText) {
   });
 }
 
+// used for verifying auth
 router.post('/test', (req, res) => {
   generateLyrebirdUtteranceFromText('test')
     .then(utterance => {
@@ -161,35 +167,51 @@ router.post('/test', (req, res) => {
 router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
   if (!!process.env.ACCESS_TOKEN && !!req.body.text && !!req.files.blob) {
     const phrase = util.sentenceCase(req.body.text);
-    console.log(phrase);
 
-    // DO SOMETHING WITH BLOB!!!
-
-    // check if utterance is already in db
-    const dbUtterance = db.getUtteranceByText(phrase);
-
-    if (!!dbUtterance) {
-      // utterance in db
-      console.log(`Utterance "${phrase}" already in DB.`);
-      res.status(200).send(dbUtterance);
-    } else {
-      // new utterance, hit lyrebird api
-      console.log(`Utterance "${phrase}" is new, generate via Lyrebird.`);
-      generateLyrebirdUtteranceFromText(phrase)
-        .then(utterance => {
-          db.logUtterance(utterance);
-          res.status(200).send(utterance);
-        })
-        .catch(e => {
-          if (!!e.data && !!e.data.detail) {
-            console.log(e.data.detail);
-          } else {
-            console.log(e);
-          }
-
-          res.status(500).send(e);
+    // upload screenshot to s3
+    const blob = req.files.blob[0];
+    s3
+      .putFile(process.env.S3_BUCKET, blob.filename, blob.path)
+      .then(s3Res => {
+        // add to utterance history with screenshot
+        db.addUtteranceToHistory({
+          utterance: phrase,
+          timestamp: moment(),
+          screenshot: `https://s3.amazonaws.com/${process.env.S3_BUCKET}/${
+            blob.filename
+          }`
         });
-    }
+
+        // check if utterance is already in db
+        const dbUtterance = db.getUtteranceByText(phrase);
+
+        if (!!dbUtterance) {
+          // utterance in db
+          console.log(`Utterance "${phrase}" already in DB.`);
+          res.status(200).send(dbUtterance);
+        } else {
+          // new utterance, hit lyrebird api
+          console.log(`Utterance "${phrase}" is new, generate via Lyrebird.`);
+          generateLyrebirdUtteranceFromText(phrase)
+            .then(utterance => {
+              db.logUtterance(utterance);
+              res.status(200).send(utterance);
+            })
+            .catch(e => {
+              if (!!e.data && !!e.data.detail) {
+                console.log(e.data.detail);
+              } else {
+                console.log(e);
+              }
+
+              res.status(500).send(e);
+            });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
   } else {
     console.log('text and access token must be set');
     console.log('req.body', req.body);
