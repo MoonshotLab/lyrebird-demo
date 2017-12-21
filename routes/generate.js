@@ -30,7 +30,7 @@ const uploadFieldSpec = [
 function generateLyrebirdUtteranceFromText(inputText) {
   return new Promise((resolve, reject) => {
     if (!!process.env.ACCESS_TOKEN) {
-      axios({
+      const request = {
         method: 'post',
         url: 'https://lyrebird.ai/api/generate/',
         data: {
@@ -43,7 +43,9 @@ function generateLyrebirdUtteranceFromText(inputText) {
           'Content-Type': 'application/json',
           Accept: 'application/json; indent=4'
         }
-      })
+      };
+      console.log(request);
+      axios(request)
         .then(lyrebirdRes => {
           // data is an array, but since we just passed in one text, we only care about the first
           if (
@@ -221,7 +223,6 @@ router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
             });
         } else {
           console.log(`Utterance "${phrase}" is new, generate via Lyrebird.`);
-          console.log(process.env);
           generateLyrebirdUtteranceFromText(phrase)
             .then(utterance => {
               db.addUtterance(utterance);
