@@ -221,6 +221,7 @@ router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
             });
         } else {
           console.log(`Utterance "${phrase}" is new, generate via Lyrebird.`);
+          console.log(process.env);
           generateLyrebirdUtteranceFromText(phrase)
             .then(utterance => {
               db.addUtterance(utterance);
