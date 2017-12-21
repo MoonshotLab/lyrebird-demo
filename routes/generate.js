@@ -117,7 +117,7 @@ function puppeteerGenerateLyrebirdUtteranceFromText(inputText) {
                 response[0].status === 'success'
               ) {
                 const utterance = response[0].utterance;
-                db.logUtterance(utterance);
+                db.addUtterance(utterance);
                 resolve(utterance);
               } else {
                 reject(new Error('invalid response'));
@@ -184,17 +184,46 @@ router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
 
         // check if utterance is already in db
         const dbUtterance = db.getUtteranceByText(phrase);
+        let generateUtterance = true;
 
         if (!!dbUtterance) {
-          // utterance in db
-          console.log(`Utterance "${phrase}" already in DB.`);
-          res.status(200).send(dbUtterance);
+          // utterance in db, check and see if file is still there
+
+          axios
+            .get(dbUtterance.audio_file)
+            .then(() => {
+              // utterance still fresh, send from db
+              console.log(`Utterance "${phrase}" already in DB.`);
+              res.status(200).send(dbUtterance);
+              generateUtterance = false;
+              return;
+            })
+            .catch(e => {
+              // utterance no longer exists, generate
+              console.log(
+                `Utterance "${phrase}" in DB, but audio file needs regenerating`
+              );
+              db.removeUtterance(dbUtterance);
+              generateLyrebirdUtteranceFromText(phrase)
+                .then(utterance => {
+                  db.addUtterance(utterance);
+                  res.status(200).send(utterance);
+                })
+                .catch(e => {
+                  if (!!e.data && !!e.data.detail) {
+                    console.log(e.data.detail);
+                  } else {
+                    console.log(e);
+                  }
+
+                  res.status(500).send(e);
+                });
+            });
         } else {
-          // new utterance, hit lyrebird api
           console.log(`Utterance "${phrase}" is new, generate via Lyrebird.`);
           generateLyrebirdUtteranceFromText(phrase)
             .then(utterance => {
-              db.logUtterance(utterance);
+              db.addUtterance(utterance);
               res.status(200).send(utterance);
             })
             .catch(e => {
@@ -207,6 +236,7 @@ router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
               res.status(500).send(e);
             });
         }
+        // new utterance, hit lyrebird api
       })
       .catch(err => {
         console.log(err);
