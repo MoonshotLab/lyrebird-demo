@@ -1,5 +1,4 @@
 const express = require('express');
-const puppeteer = require('puppeteer');
 const Promise = require('bluebird');
 const axios = require('axios');
 const moment = require('moment');
@@ -27,148 +26,82 @@ const uploadFieldSpec = [
   }
 ];
 
-function generateLyrebirdUtteranceFromText(inputText) {
+function asyncMakeSureAudioIsFresh(utterance) {
   return new Promise((resolve, reject) => {
-    if (!!process.env.ACCESS_TOKEN) {
-      const request = {
-        method: 'post',
-        url: 'https://lyrebird.ai/api/generate/',
-        data: {
-          texts: [inputText]
-        },
-        headers: {
-          Authorization: `${process.env.TOKEN_TYPE} ${
-            process.env.ACCESS_TOKEN
-          }`,
-          'Content-Type': 'application/json',
-          Accept: 'application/json; indent=4'
-        }
-      };
-      console.log(request);
-      axios(request)
-        .then(lyrebirdRes => {
-          // data is an array, but since we just passed in one text, we only care about the first
-          if (
-            lyrebirdRes.data[0].status === 'success' &&
-            !!lyrebirdRes.data[0].utterance
-          ) {
-            resolve(lyrebirdRes.data[0].utterance);
-          } else {
-            reject(new Error('response unsuccessful'));
-          }
-        })
-        .catch(e => {
-          reject(e);
-        });
-    } else {
-      reject(new Error('unset access token'));
-    }
-  });
-}
+    axios
+      .get(utterance.audio_file)
+      .then(() => {
+        resolve(utterance);
+      })
+      .catch(e => {
+        // audio not fresh, remove from db
+        db.removeUtterance(utterance);
 
-function puppeteerGenerateLyrebirdUtteranceFromText(inputText) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const timeStart = new Date();
-      const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] // fails in docker without this!
-      });
-      const page = await browser.newPage();
-
-      const LOGIN_URL = 'https://lyrebird.ai/account/login';
-      const VOICE_URL = 'https://lyrebird.ai/my/voice/';
-      const USERNAME_SELECTOR = '#id_username';
-      const PASSWORD_SELECTOR = '#id_password';
-      const LOGIN_BUTTON_SELECTOR =
-        'body > div.container.lyrebird-container > div > div > form > div:nth-child(4) > div > input';
-
-      const VOICE_INPUT_SELECTOR = '#text-entry';
-      const VOICE_GENERATE_BUTTON = '#submit-btn';
-
-      await page.goto(LOGIN_URL);
-
-      await page.click(USERNAME_SELECTOR);
-      await page.keyboard.type(process.env.LYREBIRD_EMAIL);
-
-      await page.click(PASSWORD_SELECTOR);
-      await page.keyboard.type(process.env.LYREBIRD_PASSWORD);
-
-      await page.click(LOGIN_BUTTON_SELECTOR);
-
-      await page.waitForNavigation();
-
-      await page.goto(VOICE_URL);
-
-      await page.waitForSelector(VOICE_INPUT_SELECTOR);
-
-      await page.click(VOICE_INPUT_SELECTOR);
-      await page.keyboard.type(inputText);
-
-      await page.click(VOICE_GENERATE_BUTTON);
-
-      page.on('response', responsePromise => {
-        responsePromise
-          .text()
-          .then(async JSONResponse => {
-            try {
-              const response = JSON.parse(JSONResponse);
-              if (
-                !!response &&
-                response.length > 0 &&
-                response[0].status === 'success'
-              ) {
-                const utterance = response[0].utterance;
-                db.addUtterance(utterance);
-                resolve(utterance);
-              } else {
-                reject(new Error('invalid response'));
-              }
-            } catch (e) {
-              console.log('Error parsing JSON:', e);
-              reject(new Error('invalid response'));
-            }
-
-            await browser.close();
-
-            const timeEnd = new Date();
-            console.log(
-              `response took ${(timeEnd - timeStart) / 1000} seconds`
-            );
-            return;
+        asyncGenerateLyrebirdUtterance(utterance.text)
+          .then(newUtterance => {
+            console.log('utterance regenerated!');
+            resolve(newUtterance);
           })
-          .catch(async e => {
-            console.log('Error getting JSON response:', e);
-
-            await browser.close();
-
-            const timeEnd = new Date();
-            console.log(
-              `response took ${(timeEnd - timeStart) / 1000} seconds`
-            );
-            reject(new Error('invalid response'));
+          .catch(e => {
+            console.log('error regenerating utterance!');
+            reject(e);
           });
       });
-    } catch (e) {
-      reject(e);
-    }
   });
 }
 
-// used for verifying auth
-router.post('/test', (req, res) => {
-  generateLyrebirdUtteranceFromText('test')
-    .then(utterance => {
-      res.sendStatus(200);
-    })
-    .catch(e => {
-      res.sendStatus(500);
-    });
-});
+function asyncGenerateLyrebirdUtterance(text) {
+  return new Promise((resolve, reject) => {
+    if (_.isNil(process.env.ACCESS_TOKEN)) {
+      reject(new Error('unset access token'));
+    }
+
+    const requestObj = {
+      method: 'post',
+      url: 'https://lyrebird.ai/api/generate/',
+      data: {
+        texts: [text]
+      },
+      headers: {
+        Authorization: `${process.env.TOKEN_TYPE} ${process.env.ACCESS_TOKEN}`,
+        // Authorization: `${
+        //   process.env.TOKEN_TYPE
+        // } wsRfif3925Wim2kVvIixfSoicl3xVy`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json; indent=4'
+      }
+    };
+
+    axios(requestObj)
+      .then(lyrebirdRes => {
+        if (
+          lyrebirdRes.data[0].status === 'success' &&
+          !!lyrebirdRes.data[0].utterance
+        ) {
+          return lyrebirdRes.data[0].utterance;
+        } else {
+          reject(new Error('lyrebird unable to generate utterance'));
+        }
+      })
+      .then(utterance => {
+        // add to db
+        db.addUtterance(utterance);
+        resolve(utterance);
+      })
+      .catch(err => {
+        try {
+          reject(err.response.data.detail);
+        } catch (e) {
+          reject(err);
+        }
+      });
+  });
+}
 
 router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
   if (!!process.env.ACCESS_TOKEN && !!req.body.text && !!req.files.blob) {
     const phrase = util.sentenceCase(req.body.text);
+    console.log(`Generating "${phrase}"`);
 
     // upload screenshot to s3
     const blob = req.files.blob[0];
@@ -183,65 +116,47 @@ router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
             blob.filename
           }`
         });
-
+      })
+      .then(async () => {
         // check if utterance is already in db
         const dbUtterance = db.getUtteranceByText(phrase);
-        let generateUtterance = true;
-
         if (!!dbUtterance) {
-          // utterance in db, check and see if file is still there
+          // make sure file is still there
+          console.log(`Utterance "${phrase}" already in DB.`);
 
-          axios
-            .get(dbUtterance.audio_file)
-            .then(() => {
-              // utterance still fresh, send from db
-              console.log(`Utterance "${phrase}" already in DB.`);
-              res.status(200).send(dbUtterance);
-              generateUtterance = false;
-              return;
+          return asyncMakeSureAudioIsFresh(dbUtterance)
+            .then(utterance => {
+              return utterance;
             })
-            .catch(e => {
-              // utterance no longer exists, generate
-              console.log(
-                `Utterance "${phrase}" in DB, but audio file needs regenerating`
-              );
-              db.removeUtterance(dbUtterance);
-              generateLyrebirdUtteranceFromText(phrase)
+            .catch(() => {
+              // audio is not fresh, generate
+
+              asyncGenerateLyrebirdUtterance(phrase)
                 .then(utterance => {
-                  db.addUtterance(utterance);
-                  res.status(200).send(utterance);
+                  return utterance;
                 })
                 .catch(e => {
-                  if (!!e.data && !!e.data.detail) {
-                    console.log(e.data.detail);
-                  } else {
-                    console.log(e);
-                  }
-
-                  res.status(500).send(e);
+                  throw e;
+                  return null;
                 });
             });
         } else {
-          console.log(`Utterance "${phrase}" is new, generate via Lyrebird.`);
-          generateLyrebirdUtteranceFromText(phrase)
+          return asyncGenerateLyrebirdUtterance(phrase)
             .then(utterance => {
-              db.addUtterance(utterance);
-              res.status(200).send(utterance);
+              return utterance;
             })
             .catch(e => {
-              if (!!e.data && !!e.data.detail) {
-                console.log(e.data.detail);
-              } else {
-                console.log(e);
-              }
-
-              res.status(500).send(e);
+              console.log(e);
+              throw e;
             });
         }
-        // new utterance, hit lyrebird api
       })
-      .catch(err => {
-        console.log(err);
+      .then(utterance => {
+        // file is good, resolve!
+        res.status(200).send(utterance);
+      })
+      .catch(e => {
+        console.log(e);
         res.sendStatus(500);
       });
   } else {
@@ -250,6 +165,17 @@ router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
     console.log('process.env.ACCESS_TOKEN', process.env.ACCESS_TOKEN);
     res.sendStatus(500);
   }
+});
+
+// used for verifying auth
+router.post('/test', (req, res) => {
+  asyncGenerateLyrebirdUtterance('test')
+    .then(utterance => {
+      res.sendStatus(200);
+    })
+    .catch(e => {
+      res.sendStatus(500);
+    });
 });
 
 module.exports = router;
