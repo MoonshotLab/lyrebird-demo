@@ -11,13 +11,14 @@ let mediaRecorder = null;
 
 let keepRecording = false;
 let recording = false;
+let listening = false;
 let silenceDuration = 0; // ms
 
 const volThreshold = 15; // softer than this will be considered silence
 
 const detectAudioInterval = 500; // ms
-const waitAfterVolumeLength = 0.5 * 1000; // ms
-const ambientListeningWindowLength = 15 * 1000; // ms
+const waitAfterVolumeLength = 1 * 1000; // ms
+const ambientListeningWindowLength = 5 * 1000; // ms
 
 function asyncPlayFromUrl(url) {
   return new Promise((resolve, reject) => {
@@ -31,14 +32,19 @@ function asyncPlayFromUrl(url) {
 }
 
 function startListening() {
-  console.log('start listening');
-  recordingInterval = setInterval(detectAudio, detectAudioInterval);
+  if (listening !== true) {
+    console.log('start listening');
+    listening = true;
+    recordingInterval = setInterval(detectAudio, detectAudioInterval);
+  } else {
+    console.log('already listening');
+  }
 }
 
 function stopListening() {
-  console.log('stop listening');
   clearInterval(recordingInterval);
   recordingInterval = null;
+  listening = false;
 }
 
 function startMediaRecorder() {
@@ -53,6 +59,8 @@ function stopMediaRecorder() {
   mediaRecorder.stop();
   recording = false;
   silenceDuration = 0;
+
+  stopListening();
 }
 
 // called each interval via setInterval
@@ -295,6 +303,7 @@ function asyncSetupAudio() {
         });
       })
       .then(setupMediaSource)
+      .then(ui.setupSpacebarRecord)
       .then(resolve)
       .catch(e => {
         reject(e);

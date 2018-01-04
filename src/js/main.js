@@ -6,7 +6,6 @@ function run() {
   ui
     .asyncInit()
     .then(audio.asyncSetupAudio)
-    .then(audio.startListening)
     .then(() => {
       console.log('done!');
     })

@@ -23,6 +23,15 @@ function playFromUrl(url) {
   sound.play();
 }
 
+function setupSpacebarRecord() {
+  $(window).on('keydown', function(e) {
+    if (e.keyCode === 32) {
+      // spacebar!
+      audio.startListening();
+    }
+  });
+}
+
 function setupInputChange() {
   $input.on('keyup', function(e) {
     const $this = $(this);
@@ -125,3 +134,4 @@ exports.asyncInit = asyncInit;
 exports.startProgress = startProgress;
 exports.endProgress = endProgress;
 exports.takeScreenshot = takeScreenshot;
+exports.setupSpacebarRecord = setupSpacebarRecord;
