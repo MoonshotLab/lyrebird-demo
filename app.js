@@ -25,6 +25,7 @@ http.listen(port, () => {
 module.exports = app;
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
+app.use('/process', require('./routes/process'));
 app.use('/generate', require('./routes/generate'));
 app.use('/history', require('./routes/history'));
 app.use('*', (req, res) => {

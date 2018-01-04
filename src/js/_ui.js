@@ -4,6 +4,7 @@ const download = require('downloadjs');
 
 const screensaver = require('./_screensaver');
 const video = require('./_video');
+const audio = require('./_audio');
 
 const $form = $('#form');
 const $input = $('#input');
@@ -33,43 +34,22 @@ function setupInputChange() {
   });
 }
 
-function makeGenerateCall(text, frame) {
-  const formData = new FormData();
-  formData.append('blob', frame.blob);
-  formData.append('text', text);
-
-  return $.ajax({
-    type: 'POST',
-    url: '/generate',
-    data: formData,
-    processData: false,
-    contentType: false,
-    timeout: 15 * 1000
-  });
-}
-
 function setupFormSubmit() {
   $form.on('submit', function(e) {
     e.preventDefault();
     const text = $input.val();
 
     if (!!text && text.length > 0) {
-      NProgress.start();
-
-      takeScreenshot()
-        .then(frame => {
-          return makeGenerateCall(text, frame);
-        })
-        .then(res => {
-          NProgress.done();
-
-          playFromUrl(res.audio_file);
+      audio
+        .asyncGenerateAndPlayUtterance(text)
+        .then(() => {
           $input.val('');
         })
         .catch(e => {
-          NProgress.done();
-          console.log(e);
+          console.log('error generating text', e);
         });
+    } else {
+      console.log('invalid text to generate');
     }
   });
 }
@@ -113,6 +93,16 @@ function takeScreenshot() {
   });
 }
 
+function startProgress() {
+  NProgress.start();
+  return;
+}
+
+function endProgress() {
+  NProgress.done();
+  return;
+}
+
 export function asyncInit() {
   return new Promise((resolve, reject) => {
     try {
@@ -132,3 +122,6 @@ export function asyncInit() {
 
 exports.keepAlive = keepAlive;
 exports.asyncInit = asyncInit;
+exports.startProgress = startProgress;
+exports.endProgress = endProgress;
+exports.takeScreenshot = takeScreenshot;
