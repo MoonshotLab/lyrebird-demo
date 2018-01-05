@@ -32,6 +32,7 @@ function asyncPlayFromUrl(url) {
 }
 
 function startListening() {
+  ui.showVol();
   if (listening !== true) {
     console.log('start listening');
     listening = true;
@@ -43,6 +44,7 @@ function startListening() {
 }
 
 function stopListening() {
+  ui.hideVol();
   clearInterval(recordingInterval);
   recordingInterval = null;
   listening = false;
@@ -69,6 +71,7 @@ function stopMediaRecorder() {
 function detectAudio() {
   const vol = Math.round(meter.volume * 100);
   console.log('vol', vol);
+  ui.setVol(vol);
 
   if (recording) {
     if (vol > volThreshold) {
@@ -125,7 +128,7 @@ function asyncGenerateAndPlayUtterance(text) {
     ui
       .takeScreenshot()
       .then(frame => {
-        ui.setStatus(`generating lyrebird utterance`);
+        ui.setStatus(`generating lyrebird utterance: ${text}`);
         return makeGenerateCall(text, frame);
       })
       .then(res => {

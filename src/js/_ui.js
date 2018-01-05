@@ -12,6 +12,7 @@ const $submitButton = $('#submit');
 const $historySection = $('#recording-history');
 const $historyList = $('#history-list');
 const $status = $('#status');
+const $volume = $('#vol');
 
 const $cameraRoot = $('#camera-root');
 let $cameraCanvas;
@@ -117,6 +118,18 @@ function setStatus(text) {
   $status.text(text);
 }
 
+function setVol(vol) {
+  $volume.text(vol);
+}
+
+function hideVol() {
+  $volume.parent().hide();
+}
+
+function showVol() {
+  $volume.parent().show();
+}
+
 function asyncInit() {
   return new Promise((resolve, reject) => {
     try {
@@ -141,3 +154,6 @@ exports.endProgress = endProgress;
 exports.takeScreenshot = takeScreenshot;
 exports.setupSpacebarRecord = setupSpacebarRecord;
 exports.setStatus = setStatus;
+exports.setVol = setVol;
+exports.hideVol = hideVol;
+exports.showVol = showVol;
