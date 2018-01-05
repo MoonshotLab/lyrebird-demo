@@ -8,9 +8,12 @@ block content
   div.container
     div.row
       h1 Lyrebird Demo
-      form#form
-        input#input
-        button#submit.button-primary(disabled) Submit
+      h3#status Press Spacebar to Record
+      h5(style="display: none;") Volume: 
+        span#vol 0
+      //- form#form
+      //-   input#input
+      //-   button#submit.button-primary(disabled) Submit
     div#camera-root
     div#video-wrap
       video(src='https://s3.amazonaws.com/conversational-exhibit/lyrebird-loop.mp4', loop)

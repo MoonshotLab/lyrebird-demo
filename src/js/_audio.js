@@ -32,19 +32,23 @@ function asyncPlayFromUrl(url) {
 }
 
 function startListening() {
+  ui.showVol();
   if (listening !== true) {
     console.log('start listening');
     listening = true;
     recordingInterval = setInterval(detectAudio, detectAudioInterval);
+    ui.setStatus('listening');
   } else {
     console.log('already listening');
   }
 }
 
 function stopListening() {
+  ui.hideVol();
   clearInterval(recordingInterval);
   recordingInterval = null;
   listening = false;
+  ui.setStatus('stopped listening');
 }
 
 function startMediaRecorder() {
@@ -67,6 +71,7 @@ function stopMediaRecorder() {
 function detectAudio() {
   const vol = Math.round(meter.volume * 100);
   console.log('vol', vol);
+  ui.setVol(vol);
 
   if (recording) {
     if (vol > volThreshold) {
@@ -123,6 +128,7 @@ function asyncGenerateAndPlayUtterance(text) {
     ui
       .takeScreenshot()
       .then(frame => {
+        ui.setStatus(`generating lyrebird utterance: ${text}`);
         return makeGenerateCall(text, frame);
       })
       .then(res => {
@@ -130,15 +136,19 @@ function asyncGenerateAndPlayUtterance(text) {
 
         console.log('generate res', res);
 
+        ui.setStatus(`playing lyrebird recording`);
         return asyncPlayFromUrl(res.audio_file)
           .then(() => {
+            ui.setStatus(`done playing lyrebird recording`);
             resolve();
           })
           .catch(e => {
+            ui.setStatus(`error playing lyrebird recording`);
             reject(e);
           });
       })
       .catch(e => {
+        ui.setStatus(`error: ${e}`);
         NProgress.done();
         reject(e);
       });
@@ -151,6 +161,7 @@ function processAudioBlob(blob) {
   formData.append('data', blob);
 
   ui.startProgress();
+  ui.setStatus('processing audio...');
   $.ajax({
     type: 'POST',
     url: '/process',
@@ -161,19 +172,22 @@ function processAudioBlob(blob) {
     .then(res => {
       console.log('transcription res', res);
       const transcription = res.transcription;
+      ui.setStatus(`audio transcribed: ${transcription}`);
       return asyncGenerateAndPlayUtterance(transcription);
     })
     .then(() => {
       ui.endProgress();
-      startListening();
+      // startListening();
+      ui.setStatus(`audio played, waiting for spacebar press`);
     })
     .catch(e => {
       console.log('post error', e);
       ui.endProgress();
       // ui.setUserText('Error processing audio.');
       // handleAudioProcessingError(e);
-      alert('could not transcribe, unable to submit to lyrebird');
-      startListening();
+      ui.setStatus(`could not transcribe audio, unable to submit to lyrebird`);
+      // alert('could not transcribe, unable to submit to lyrebird');
+      // startListening();
     });
 }
 
@@ -256,6 +270,7 @@ function setupMediaSource(stream) {
       processAudioBlob(blob);
     } else {
       console.log('discarding silent recording');
+      ui.setStatus('discarding silent recording, waiting for spacebar');
     }
 
     keepRecording = false;
