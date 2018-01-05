@@ -11,6 +11,7 @@ const $input = $('#input');
 const $submitButton = $('#submit');
 const $historySection = $('#recording-history');
 const $historyList = $('#history-list');
+const $status = $('#status');
 
 const $cameraRoot = $('#camera-root');
 let $cameraCanvas;
@@ -112,7 +113,11 @@ function endProgress() {
   return;
 }
 
-export function asyncInit() {
+function setStatus(text) {
+  $status.text(text);
+}
+
+function asyncInit() {
   return new Promise((resolve, reject) => {
     try {
       setupInputChange();
@@ -135,3 +140,4 @@ exports.startProgress = startProgress;
 exports.endProgress = endProgress;
 exports.takeScreenshot = takeScreenshot;
 exports.setupSpacebarRecord = setupSpacebarRecord;
+exports.setStatus = setStatus;
