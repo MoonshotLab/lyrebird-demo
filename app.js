@@ -16,6 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 require('./lib/db').initializeDb();
+require('./lib/arduino').connectToArduino();
 
 const port = process.env.PORT || 3000;
 http.listen(port, () => {
