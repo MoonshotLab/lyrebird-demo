@@ -185,8 +185,8 @@ function processAudioBlob(blob) {
       ui.endProgress();
       // ui.setUserText('Error processing audio.');
       // handleAudioProcessingError(e);
-      ui.setStatus(`could not transcribe audio`);
-      alert('could not transcribe, unable to submit to lyrebird');
+      ui.setStatus(`could not transcribe audio, unable to submit to lyrebird`);
+      // alert('could not transcribe, unable to submit to lyrebird');
       // startListening();
     });
 }
@@ -270,6 +270,7 @@ function setupMediaSource(stream) {
       processAudioBlob(blob);
     } else {
       console.log('discarding silent recording');
+      ui.setStatus('discarding silent recording, waiting for spacebar');
     }
 
     keepRecording = false;
