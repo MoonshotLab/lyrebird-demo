@@ -2,6 +2,9 @@ const NProgress = require('nprogress');
 const Promise = require('bluebird');
 const download = require('downloadjs');
 
+const io = require('socket.io-client');
+const socket = io();
+
 const screensaver = require('./_screensaver');
 const video = require('./_video');
 const audio = require('./_audio');
@@ -30,6 +33,19 @@ function setupSpacebarRecord() {
     if (e.keyCode === 32) {
       // spacebar!
       audio.startListening();
+    }
+  });
+}
+
+function setupArduinoButtonRecord() {
+  socket.on('new_msg', function(data) {
+    switch (data.msg) {
+      case 'press':
+        audio.startListening();
+        break;
+      default:
+        console.log('unknown message from arduino:', data.msg);
+        break;
     }
   });
 }
@@ -157,3 +173,4 @@ exports.setStatus = setStatus;
 exports.setVol = setVol;
 exports.hideVol = hideVol;
 exports.showVol = showVol;
+exports.setupArduinoButtonRecord = setupArduinoButtonRecord;

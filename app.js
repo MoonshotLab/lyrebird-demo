@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
+const io = require('socket.io')(http);
+exports.io = io;
 
 const bodyParser = require('body-parser');
 const autoReap = require('multer-autoreap');
@@ -16,7 +18,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 require('./lib/db').initializeDb();
-require('./lib/arduino').connectToArduino();
+
+if (process.env.CONNECT_TO_ARDUINO == 'true') {
+  require('./lib/arduino').connectToArduino();
+}
 
 const port = process.env.PORT || 3000;
 http.listen(port, () => {

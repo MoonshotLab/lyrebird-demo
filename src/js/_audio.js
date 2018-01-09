@@ -3,6 +3,9 @@ const NProgress = require('nprogress');
 
 const ui = require('./_ui');
 
+const io = require('socket.io-client');
+const socket = io();
+
 let recordingInterval = null; // reference to setInterval
 
 let audioContext = null;
@@ -33,6 +36,12 @@ function asyncPlayFromUrl(url) {
 
 function startListening() {
   ui.showVol();
+
+  // turn button on
+  socket.emit('new_button_status', {
+    status: 1
+  });
+
   if (listening !== true) {
     console.log('start listening');
     listening = true;
@@ -45,6 +54,12 @@ function startListening() {
 
 function stopListening() {
   ui.hideVol();
+
+  // turn button off
+  socket.emit('new_button_status', {
+    status: 0
+  });
+
   clearInterval(recordingInterval);
   recordingInterval = null;
   listening = false;
@@ -319,6 +334,7 @@ function asyncSetupAudio() {
       })
       .then(setupMediaSource)
       .then(ui.setupSpacebarRecord)
+      .then(ui.setupArduinoButtonRecord)
       .then(resolve)
       .catch(e => {
         reject(e);
