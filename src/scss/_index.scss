@@ -27,6 +27,11 @@ body#index {
     padding: 2.5%;
   }
 
+  main,
+  #wrapper {
+    height: 100%;
+  }
+
   main {
     top: 50%;
     transform: translateY(-50%);
@@ -36,8 +41,8 @@ body#index {
     background-color: $darkGray;
     margin: auto;
     overflow: hidden;
-    max-height: 671px;
-    max-width: 1351px;
+    // max-height: 700px;
+    // max-width: 1351px;
     padding: 0% 4%;
     display: grid;
     align-items: center;
@@ -107,7 +112,7 @@ body#index {
 
   div#jeff-photo {
     grid-area: jeff-photo;
-    margin-left: -70px;
+    margin-left: -100px;
     height: 100%;
 
     img {
@@ -124,7 +129,7 @@ body#index {
   #fine-print {
     display: inline-grid;
     align-items: center;
-    grid-template-columns: 10% 40% 46% 4%;
+    grid-template-columns: 7% auto 51% 5%;
     grid-template-rows: 100%;
     grid-template-areas: 'loading . fine-print-copy squiggles';
     font-size: 13px;
