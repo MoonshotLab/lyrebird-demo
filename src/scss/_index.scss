@@ -1,77 +1,160 @@
 html,
 body {
-  font-family: 'Lato', sans-serif;
-}
-
-main {
-  margin-top: 4rem;
-  margin-bottom: 4rem;
-}
-
-button[disabled] {
-  background: #ccc;
-  border-color: #ccc;
-  text-shadow: none;
-  cursor: default;
-
-  &:hover {
-    background: #ccc;
-    border-color: #ccc;
-  }
-}
-
-audio {
-  display: block;
-  width: 100%;
-}
-
-.container {
-  max-width: 80rem;
-}
-
-#form {
-}
-
-#input {
-  display: block;
-  padding: 1.5rem;
-  width: 100%;
-  font-size: 2.4rem;
-}
-
-#submit {
-  float: right;
-}
-
-#recording-history {
-  display: none;
-}
-
-.recording-info {
-  margin-top: 2rem;
-
-  p {
-    margin-bottom: 1em;
-  }
-}
-
-.nav {
   overflow: hidden;
+  font-family: 'Calluna Sans', sans-serif;
+  color: $white;
+  height: 100vh;
+  width: 100vw;
+  // background: pink;
+  background-color: $darkGray;
 }
 
-.left,
-.right {
-  display: inline-block;
-}
-
-.left {
-  float: left;
-}
-
-.right {
-  float: right;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
 }
 
 #camera-root {
   display: none;
+}
+
+body#index {
+  section {
+    padding: 2.5%;
+  }
+
+  main {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  #wrapper {
+    background-color: $darkGray;
+    margin: auto;
+    overflow: hidden;
+    height: 671px !important;
+    width: 1351px;
+    padding: 0% 4%;
+    display: grid;
+    align-items: center;
+
+    grid-template-columns: 100%;
+    grid-template-rows: 20% 60% 20%;
+    grid-template-areas:
+      '.'
+      'main-content'
+      'fine-print';
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.5em;
+    }
+  }
+
+  #main-content-wrap {
+    grid-area: main-content;
+  }
+
+  #main-content {
+    height: 100%;
+    width: 100%;
+    display: inline-grid;
+    grid-template-columns: 45% 25% 30%;
+    grid-template-rows: 4fr 1fr 2fr 2fr;
+    align-items: center;
+    grid-template-areas:
+      'jeff-say jeff-photo .'
+      '. jeff-photo .'
+      'press-record jeff-photo .'
+      'rule jeff-photo .'
+      'when-you-pause jeff-photo .';
+  }
+
+  h1#jeff-say {
+    grid-area: jeff-say;
+    // font-size: 90px;
+    width: 90%;
+  }
+
+  p#press-record {
+    grid-area: press-record;
+    font-size: 24px;
+    width: 60%;
+  }
+
+  hr#rule {
+    grid-area: rule;
+    border: 0;
+    border-top: 10px solid $lightGray;
+    width: 75%;
+    margin: 20px 0;
+  }
+
+  p#when-you-pause {
+    grid-area: when-you-pause;
+    font-size: 16px;
+    width: 65%;
+  }
+
+  div#jeff-photo {
+    grid-area: jeff-photo;
+    margin-left: -70px;
+    height: 100%;
+
+    img {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  #fine-print-wrap {
+    grid-area: fine-print;
+  }
+
+  #fine-print {
+    display: inline-grid;
+    align-items: center;
+    grid-template-columns: 10% 40% 46% 4%;
+    grid-template-rows: 100%;
+    grid-template-areas: 'loading . fine-print-copy squiggles';
+    font-size: 13px;
+  }
+
+  #loading {
+    grid-area: loading;
+    height: 100%;
+
+    img {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  #fine-print-copy {
+    grid-area: fine-print-copy;
+    padding-right: 10px;
+    text-align: right;
+    font-weight: 400;
+  }
+
+  #squiggles {
+    grid-area: squiggles;
+    height: 100%;
+
+    img {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
 }

@@ -2,21 +2,40 @@ extends layout.pug
 
 block header_scripts
   link(rel='stylesheet' href='https://unpkg.com/nprogress@0.2.0/nprogress.css')
-
+    
 block content
-  h1= foo
-  div.container
-    div.row
-      h1 Lyrebird Demo
-      h3#status Press Spacebar to Record
-      h5(style="display: none;") Volume: 
-        span#vol 0
-      //- form#form
-      //-   input#input
-      //-   button#submit.button-primary(disabled) Submit
-    div#camera-root
-    div#video-wrap
-      video(src='https://s3.amazonaws.com/conversational-exhibit/lyrebird-loop.mp4', loop)
+  div#wrapper
+    section#main-content-wrap
+      div#main-content
+        h1#jeff-say.lt-blue What do you want Jeff to say?
+        p#press-record.white.medium Press the RECORD button below and speak clearly.
+        hr#rule.lt-gray.thick
+        p#when-you-pause.lt-gray When you pause after speaking, Lyrebird will play back your words in the dulcet tones of a 21st-century CEO.
+        div#jeff-photo
+          img(src='/img/jeff.png')
+    section#fine-print-wrap
+      div#fine-print
+        div#loading
+          img(src='/img/loading.gif')
+        p#fine-print-copy.lt-blue.tiny Designed by a Canadian start-up, Lyrebird already has been used to show how well-known voices can deliver messages they never actually said. Along with new video processing technology, the implications for "fake news" have raised alarms among journalists and media worldwide.
+        div#squiggles
+          img(src='/img/squiggles.png')
+        
+
+//- block content
+//-   h1= foo
+//-   div.container
+//-     div.row
+//-       h1 Lyrebird Demo
+//-       h3#status Press Spacebar to Record
+//-       h5(style="display: none;") Volume: 
+//-         span#vol 0
+//-       //- form#form
+//-       //-   input#input
+//-       //-   button#submit.button-primary(disabled) Submit
+//-     div#camera-root
+//-     div#video-wrap
+//-       video(src='https://s3.amazonaws.com/conversational-exhibit/lyrebird-loop.mp4', loop)
 
 block footer_scripts
   script(src='/js/lib/capture-video-frame.js')
