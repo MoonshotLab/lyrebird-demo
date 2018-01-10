@@ -36,8 +36,8 @@ body#index {
     background-color: $darkGray;
     margin: auto;
     overflow: hidden;
-    height: 671px !important;
-    width: 1351px;
+    max-height: 671px;
+    max-width: 1351px;
     padding: 0% 4%;
     display: grid;
     align-items: center;
@@ -95,14 +95,14 @@ body#index {
     grid-area: rule;
     border: 0;
     border-top: 10px solid $lightGray;
-    width: 75%;
+    width: 70%;
     margin: 20px 0;
   }
 
   p#when-you-pause {
     grid-area: when-you-pause;
     font-size: 16px;
-    width: 65%;
+    width: 58%;
   }
 
   div#jeff-photo {
