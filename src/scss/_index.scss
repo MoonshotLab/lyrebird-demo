@@ -27,6 +27,12 @@ body#index {
     padding: 2.5%;
   }
 
+  main {
+    max-width: 1700px;
+    max-height: 850px;
+    margin: 0 auto;
+  }
+
   main,
   #wrapper {
     height: 100%;
@@ -73,24 +79,24 @@ body#index {
     height: 100%;
     width: 100%;
     display: inline-grid;
-    grid-template-columns: 45% 25% 30%;
-    grid-template-rows: 4fr 1fr 2fr 2fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 100%;
     align-items: center;
-    grid-template-areas:
-      'jeff-say jeff-photo .'
-      '. jeff-photo .'
-      'press-record jeff-photo .'
-      'rule jeff-photo .'
-      'when-you-pause jeff-photo .';
+    grid-template-areas: 'instructions jeff-photo .';
+  }
+
+  #instructions {
+    grid-area: instructions;
   }
 
   h1#jeff-say {
     grid-area: jeff-say;
     // font-size: 90px;
-    width: 90%;
+    // width: 80%;
   }
 
   p#press-record {
+    margin-top: 50px;
     grid-area: press-record;
     font-size: 24px;
     width: 60%;
@@ -100,25 +106,42 @@ body#index {
     grid-area: rule;
     border: 0;
     border-top: 10px solid $lightGray;
-    width: 70%;
+    width: 80%;
     margin: 20px 0;
   }
 
   p#when-you-pause {
     grid-area: when-you-pause;
     font-size: 16px;
-    width: 58%;
+    width: 70%;
   }
 
   div#jeff-photo {
     grid-area: jeff-photo;
-    margin-left: -100px;
+    // margin-left: -80px;
     height: 100%;
 
     img {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+    }
+  }
+
+  #status-wrap {
+    padding-left: 50px;
+    text-align: center;
+
+    * {
+      font-size: 32px;
+      font-weight: 400;
+    }
+  }
+
+  #user-text {
+    &:before,
+    &:after {
+      content: '"';
     }
   }
 
@@ -131,12 +154,12 @@ body#index {
     align-items: center;
     grid-template-columns: 7% auto 51% 5%;
     grid-template-rows: 100%;
-    grid-template-areas: 'loading . fine-print-copy squiggles';
+    grid-template-areas: 'in-progress . fine-print-copy squiggles';
     font-size: 13px;
   }
 
-  #loading {
-    grid-area: loading;
+  #in-progress {
+    grid-area: in-progress;
     height: 100%;
 
     img {

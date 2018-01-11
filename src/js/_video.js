@@ -81,8 +81,10 @@ function hookUpDetectorEvents(detector) {
   });
 
   detector.addEventListener('onWebcamConnectFailure', () => {
-    ui.setVideoStatus('Error connecting');
-    console.log('error connecting to webcam');
+    const message =
+      'Error connecting to webcam. Make sure it is plugged in and enabled.';
+    ui.setMessageText(message);
+    console.log(message);
   });
 }
 

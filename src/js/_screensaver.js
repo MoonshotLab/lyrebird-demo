@@ -9,6 +9,7 @@ let screensaverTimeout = null;
 const videoPlayingClass = 'video-playing';
 
 function playVideo() {
+  video.loop = true;
   video.play();
 }
 

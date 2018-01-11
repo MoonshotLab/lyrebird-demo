@@ -1,6 +1,6 @@
-const NProgress = require('nprogress');
 const Promise = require('bluebird');
 const download = require('downloadjs');
+require('animated-ellipsis');
 
 const io = require('socket.io-client');
 const socket = io();
@@ -9,19 +9,22 @@ const screensaver = require('./_screensaver');
 const video = require('./_video');
 const audio = require('./_audio');
 
-const $form = $('#form');
-const $input = $('#input');
-const $submitButton = $('#submit');
-const $historySection = $('#recording-history');
-const $historyList = $('#history-list');
-const $status = $('#status');
-const $volume = $('#vol');
+const $statusWrap = $('#status-wrap');
+const $listeningStatus = $('#listening');
+const $processingStatus = $('#processing');
+const $userText = $('#user-text');
+const $messageText = $('#message-text');
+const $inProgress = $('#in-progress');
 
 const $cameraRoot = $('#camera-root');
 let $cameraCanvas;
 
 let screensaverTimeout = null;
 let screensaverTimeoutLength = 30 * 1000; // ms
+
+function setupAnimateEllipsis() {
+  document.querySelectorAll('.ae').animateEllipsis();
+}
 
 function playFromUrl(url) {
   const sound = new Audio(url);
@@ -46,37 +49,6 @@ function setupArduinoButtonRecord() {
       default:
         console.log('unknown message from arduino:', data.msg);
         break;
-    }
-  });
-}
-
-function setupInputChange() {
-  $input.on('keyup', function(e) {
-    const $this = $(this);
-    if ($this.val().length > 0) {
-      $submitButton.prop('disabled', false);
-    } else {
-      $submitButton.prop('disabled', true);
-    }
-  });
-}
-
-function setupFormSubmit() {
-  $form.on('submit', function(e) {
-    e.preventDefault();
-    const text = $input.val();
-
-    if (!!text && text.length > 0) {
-      audio
-        .asyncGenerateAndPlayUtterance(text)
-        .then(() => {
-          $input.val('');
-        })
-        .catch(e => {
-          console.log('error generating text', e);
-        });
-    } else {
-      console.log('invalid text to generate');
     }
   });
 }
@@ -121,42 +93,64 @@ function takeScreenshot() {
 }
 
 function startProgress() {
-  NProgress.start();
-  return;
+  $inProgress.css('visibility', 'visible');
+  // NProgress.start();
+  // return;
 }
 
 function endProgress() {
-  NProgress.done();
-  return;
+  $inProgress.css('visibility', 'hidden');
+  // NProgress.done();
+  // return;
 }
 
-function setStatus(text) {
-  $status.text(text);
+function showListeningStatus() {
+  showStatusSection();
+  $('.status').hide();
+  $listeningStatus.show();
 }
 
-function setVol(vol) {
-  $volume.text(vol);
+function showProcessingStatus() {
+  showStatusSection();
+  $('.status').hide();
+  $processingStatus.show();
 }
 
-function hideVol() {
-  $volume.parent().hide();
+function setUserText(text) {
+  showStatusSection();
+  $('.status').hide();
+  $userText.text(text);
+  $userText.show();
 }
 
-function showVol() {
-  $volume.parent().show();
+function setMessageText(text) {
+  showStatusSection();
+  $('.status').hide();
+  $messageText.text(text);
+  $messageText.show();
+}
+
+function hideStatusSection() {
+  $statusWrap.hide();
+}
+
+function showStatusSection() {
+  $statusWrap.show();
 }
 
 function asyncInit() {
   return new Promise((resolve, reject) => {
     try {
-      setupInputChange();
-      setupFormSubmit();
       setupActivityWake();
+      setupAnimateEllipsis();
       video
         .asyncSetupCamera($cameraRoot)
         .then(video.startWatching)
         .then(keepAlive)
-        .then(resolve);
+        .then(resolve)
+        .catch(e => {
+          reject(e);
+        });
     } catch (e) {
       reject(e);
     }
@@ -169,8 +163,10 @@ exports.startProgress = startProgress;
 exports.endProgress = endProgress;
 exports.takeScreenshot = takeScreenshot;
 exports.setupSpacebarRecord = setupSpacebarRecord;
-exports.setStatus = setStatus;
-exports.setVol = setVol;
-exports.hideVol = hideVol;
-exports.showVol = showVol;
 exports.setupArduinoButtonRecord = setupArduinoButtonRecord;
+exports.setUserText = setUserText;
+exports.showListeningStatus = showListeningStatus;
+exports.showProcessingStatus = showProcessingStatus;
+exports.setMessageText = setMessageText;
+exports.hideStatusSection = hideStatusSection;
+exports.showStatusSection = showStatusSection;

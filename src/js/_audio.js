@@ -1,5 +1,4 @@
 const Promise = require('bluebird');
-const NProgress = require('nprogress');
 
 const ui = require('./_ui');
 
@@ -35,8 +34,6 @@ function asyncPlayFromUrl(url) {
 }
 
 function startListening() {
-  ui.showVol();
-
   // turn button on
   socket.emit('new_button_status', {
     status: 1
@@ -46,15 +43,13 @@ function startListening() {
     console.log('start listening');
     listening = true;
     recordingInterval = setInterval(detectAudio, detectAudioInterval);
-    ui.setStatus('listening');
+    ui.showListeningStatus();
   } else {
     console.log('already listening');
   }
 }
 
 function stopListening() {
-  ui.hideVol();
-
   // turn button off
   socket.emit('new_button_status', {
     status: 0
@@ -63,7 +58,6 @@ function stopListening() {
   clearInterval(recordingInterval);
   recordingInterval = null;
   listening = false;
-  ui.setStatus('stopped listening');
 }
 
 function startMediaRecorder() {
@@ -86,7 +80,6 @@ function stopMediaRecorder() {
 function detectAudio() {
   const vol = Math.round(meter.volume * 100);
   console.log('vol', vol);
-  ui.setVol(vol);
 
   if (recording) {
     if (vol > volThreshold) {
@@ -138,33 +131,32 @@ function makeGenerateCall(text, frame) {
 
 function asyncGenerateAndPlayUtterance(text) {
   return new Promise((resolve, reject) => {
-    NProgress.start();
+    ui.startProgress();
 
     ui
       .takeScreenshot()
       .then(frame => {
-        ui.setStatus(`generating lyrebird utterance: ${text}`);
+        ui.setUserText(text);
         return makeGenerateCall(text, frame);
       })
       .then(res => {
-        NProgress.done();
+        ui.endProgress();
 
         console.log('generate res', res);
 
-        ui.setStatus(`playing lyrebird recording`);
         return asyncPlayFromUrl(res.audio_file)
           .then(() => {
-            ui.setStatus(`done playing lyrebird recording`);
             resolve();
           })
           .catch(e => {
-            ui.setStatus(`error playing lyrebird recording`);
+            ui.setMessageText('Could not play generated audio.');
             reject(e);
           });
       })
       .catch(e => {
-        ui.setStatus(`error: ${e}`);
-        NProgress.done();
+        ui.setMessageText('Oops, something went wrong!');
+        console.log(e);
+        ui.endProgress();
         reject(e);
       });
   });
@@ -176,7 +168,7 @@ function processAudioBlob(blob) {
   formData.append('data', blob);
 
   ui.startProgress();
-  ui.setStatus('processing audio...');
+  ui.showProcessingStatus();
   $.ajax({
     type: 'POST',
     url: '/process',
@@ -187,20 +179,29 @@ function processAudioBlob(blob) {
     .then(res => {
       console.log('transcription res', res);
       const transcription = res.transcription;
-      ui.setStatus(`audio transcribed: ${transcription}`);
+      ui.setUserText(transcription);
       return asyncGenerateAndPlayUtterance(transcription);
     })
     .then(() => {
       ui.endProgress();
       // startListening();
-      ui.setStatus(`audio played, waiting for spacebar press`);
+      // ui.setStatus(`audio played, waiting for spacebar press`);
+      ui.hideStatusSection();
     })
     .catch(e => {
       console.log('post error', e);
       ui.endProgress();
       // ui.setUserText('Error processing audio.');
       // handleAudioProcessingError(e);
-      ui.setStatus(`could not transcribe audio, unable to submit to lyrebird`);
+      // const message = `Unfortunately, I was unable to transcribe that audio. Please try again.`;
+      // asyncGenerateAndPlayUtterance(message)
+      //   .then(() => {
+      //     ui.setMessageText(message);
+      //   })
+      //   .catch(e => {
+      //     console.log(e);
+      //     ui.setMessageText(message);
+      //   });
       // alert('could not transcribe, unable to submit to lyrebird');
       // startListening();
     });
@@ -285,7 +286,15 @@ function setupMediaSource(stream) {
       processAudioBlob(blob);
     } else {
       console.log('discarding silent recording');
-      ui.setStatus('discarding silent recording, waiting for spacebar');
+      // const message = `Unfortunately, I was unable to transcribe that audio. Please try again.`;
+      // asyncGenerateAndPlayUtterance(message)
+      //   .then(() => {
+      //     ui.setMessageText(message);
+      //   })
+      //   .catch(e => {
+      //     console.log(e);
+      //     ui.setMessageText(message);
+      //   });
     }
 
     keepRecording = false;

@@ -7,39 +7,31 @@ block content
   div#wrapper
     section#main-content-wrap
       div#main-content
-        h1#jeff-say.lt-blue What do you want Jeff to say?
-        p#press-record.white.medium Press the RECORD button below and speak clearly.
-        hr#rule.lt-gray.thick
-        p#when-you-pause.lt-gray When you pause after speaking, Lyrebird will play back your words in the dulcet tones of a 21st-century CEO.
+        div#instructions
+          h1#jeff-say.lt-blue What do you want Jeff to say?
+          p#press-record.white.medium Press the RECORD button below and speak clearly.
+          hr#rule.lt-gray.thick
+          p#when-you-pause.lt-gray When you pause after speaking, Lyrebird will play back your words in the dulcet tones of a 21st-century CEO.
         div#jeff-photo
           img(src='/img/jeff.png')
+        div#status-wrap(style="display: none;")
+          h3.status#listening Listening<span class="ae"></span>
+          h3.status#processing Processing<span class="ae"></span>
+          h3.status#user-text
+          h3.status#message-text
+            
     section#fine-print-wrap
       div#fine-print
-        div#loading
+        div#in-progress(style="visibility: hidden;")
           img(src='/img/loading.gif')
         p#fine-print-copy.lt-blue.tiny Designed by a Canadian start-up, Lyrebird already has been used to show how well-known voices can deliver messages they never actually said. Along with new video processing technology, the implications for "fake news" have raised alarms among journalists and media worldwide.
         div#squiggles
           img(src='/img/squiggles.png')
   div#video-wrap
     video
-      source(src='http://d32vnycoqqt3qz.cloudfront.net/loops/lyrebird-loop-simple.mp4', type='video/mp4', loop)
-      source(src='http://d32vnycoqqt3qz.cloudfront.net/loops/lyrebird-loop-simple.webm', type='video/webm', loop)
-        
-
-//- block content
-//-   h1= foo
-//-   div.container
-//-     div.row
-//-       h1 Lyrebird Demo
-//-       h3#status Press Spacebar to Record
-//-       h5(style="display: none;") Volume: 
-//-         span#vol 0
-//-       //- form#form
-//-       //-   input#input
-//-       //-   button#submit.button-primary(disabled) Submit
-//-     div#camera-root
-//-     div#video-wrap
-//-       video(src='https://s3.amazonaws.com/conversational-exhibit/lyrebird-loop.mp4', loop)
+      source(src='https://d32vnycoqqt3qz.cloudfront.net/loops/lyrebird-loop-simple.mp4', type='video/mp4', loop)
+      source(src='https://d32vnycoqqt3qz.cloudfront.net/loops/lyrebird-loop-simple.webm', type='video/webm', loop)
+  div#camera-root
 
 block footer_scripts
   script(src='/js/lib/capture-video-frame.js')
