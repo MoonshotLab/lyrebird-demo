@@ -10,6 +10,8 @@
 }
 
 body.video-playing {
+  cursor: none;
+
   #video-wrap {
     opacity: 1;
     z-index: 10;
