@@ -193,7 +193,7 @@ function processAudioBlob(blob) {
       ui.endProgress();
       // ui.setUserText('Error processing audio.');
       // handleAudioProcessingError(e);
-      const message = `"Unfortunately, I was unable to transcribe that audio. Please try again."`;
+      const message = `Unfortunately, I was unable to transcribe that audio. Please try again.`;
       asyncGenerateAndPlayUtterance(message)
         .then(() => {
           ui.setMessageText('');
