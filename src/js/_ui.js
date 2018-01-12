@@ -44,8 +44,12 @@ function setupArduinoButtonRecord() {
   socket.on('new_msg', function(data) {
     switch (data.msg) {
       case 'press':
-        keepAlive();
-        audio.startListening();
+        if (screensaver.isActivated()) {
+          keepAlive(); // if screensaver is going, just wake up
+        } else {
+          audio.startListening(); // else start recording
+        }
+
         break;
       default:
         console.log('unknown message from arduino:', data.msg);
