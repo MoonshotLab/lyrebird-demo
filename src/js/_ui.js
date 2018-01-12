@@ -44,6 +44,7 @@ function setupArduinoButtonRecord() {
   socket.on('new_msg', function(data) {
     switch (data.msg) {
       case 'press':
+        keepAlive();
         audio.startListening();
         break;
       default:
