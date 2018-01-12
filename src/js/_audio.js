@@ -193,15 +193,15 @@ function processAudioBlob(blob) {
       ui.endProgress();
       // ui.setUserText('Error processing audio.');
       // handleAudioProcessingError(e);
-      // const message = `Unfortunately, I was unable to transcribe that audio. Please try again.`;
-      // asyncGenerateAndPlayUtterance(message)
-      //   .then(() => {
-      //     ui.setMessageText(message);
-      //   })
-      //   .catch(e => {
-      //     console.log(e);
-      //     ui.setMessageText(message);
-      //   });
+      const message = `Unfortunately, I was unable to transcribe that audio. Please try again.`;
+      asyncGenerateAndPlayUtterance(message)
+        .then(() => {
+          ui.setMessageText(message);
+        })
+        .catch(e => {
+          console.log(e);
+          ui.setMessageText(message);
+        });
       // alert('could not transcribe, unable to submit to lyrebird');
       // startListening();
     });
