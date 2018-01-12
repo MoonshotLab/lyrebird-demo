@@ -18,7 +18,7 @@ void setup() {
 void loop() {
    if (digitalRead(buttonPin) == HIGH) {
      Serial.println("press");
-     delay(100);
+     delay(500);
    }
 
   while (Serial.available()) {
