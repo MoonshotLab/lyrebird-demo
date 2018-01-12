@@ -289,11 +289,11 @@ function setupMediaSource(stream) {
       const message = `Unfortunately, I was unable to transcribe that audio. Please try again.`;
       asyncGenerateAndPlayUtterance(message)
         .then(() => {
-          ui.setMessageText(message);
+          ui.setMessageText('');
         })
         .catch(e => {
           console.log(e);
-          ui.setMessageText(message);
+          ui.setMessageText('');
         });
     }
 
