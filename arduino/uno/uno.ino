@@ -8,8 +8,6 @@ void processBuffer();
 char readBuf[READ_BUF_SIZE];
 size_t readBufOffset = 0;
 
-bool buttonOn = false;
-
 void setup() {
   Serial.begin(9600);
 
@@ -18,9 +16,9 @@ void setup() {
 }
 
 void loop() {
-   if (digitalRead(buttonPin) == HIGH && buttonOn != true) {
+   if (digitalRead(buttonPin) == HIGH) {
      Serial.println("press");
-     buttonOn = true;
+     delay(100);
    }
 
   while (Serial.available()) {
@@ -42,12 +40,10 @@ void loop() {
 }
 
 void turnButtonOn() {
-  buttonOn = true;
   digitalWrite(ledPin, HIGH);
 }
 
 void turnButtonOff() {
-  buttonOn = false;
   digitalWrite(ledPin, LOW);
 }
 

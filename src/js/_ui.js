@@ -45,12 +45,13 @@ function setupArduinoButtonRecord() {
     switch (data.msg) {
       case 'press':
         console.log('button press');
-        keepAlive();
 
         if (screensaver.isActivated() !== true) {
           audio.startListening(); // else start recording
           console.log('screensaver not activated, listening');
         }
+
+        keepAlive();
 
         break;
       default:
