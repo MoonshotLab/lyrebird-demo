@@ -286,15 +286,15 @@ function setupMediaSource(stream) {
       processAudioBlob(blob);
     } else {
       console.log('discarding silent recording');
-      // const message = `Unfortunately, I was unable to transcribe that audio. Please try again.`;
-      // asyncGenerateAndPlayUtterance(message)
-      //   .then(() => {
-      //     ui.setMessageText(message);
-      //   })
-      //   .catch(e => {
-      //     console.log(e);
-      //     ui.setMessageText(message);
-      //   });
+      const message = `Unfortunately, I was unable to transcribe that audio. Please try again.`;
+      asyncGenerateAndPlayUtterance(message)
+        .then(() => {
+          ui.setMessageText(message);
+        })
+        .catch(e => {
+          console.log(e);
+          ui.setMessageText(message);
+        });
     }
 
     keepRecording = false;
