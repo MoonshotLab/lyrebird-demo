@@ -27,7 +27,7 @@ function hookUpDetectorEvents(detector) {
     timestamp
   ) {
     frames++;
-    if (frames % 5 === 0) {
+    if (frames % 20 === 0) {
       if (faces.length > 0) {
         ui.keepAlive();
         if (faceInFrame !== true) {
