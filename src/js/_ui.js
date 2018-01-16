@@ -20,7 +20,7 @@ const $cameraRoot = $('#camera-root');
 let $cameraCanvas;
 
 let screensaverTimeout = null;
-let screensaverTimeoutLength = 30 * 1000; // ms
+let screensaverTimeoutLength = 2.5 * 60 * 1000; // ms
 
 function setupAnimateEllipsis() {
   document.querySelectorAll('.ae').animateEllipsis();
