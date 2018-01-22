@@ -8,6 +8,9 @@
     "watch": "gulp watch",
     "dev": "npm-run-all --parallel start watch"
   },
+  "engines": {
+    "node": "8.4.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
