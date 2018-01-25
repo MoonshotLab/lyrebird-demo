@@ -136,13 +136,13 @@ function asyncGenerateAndPlayUtterance(text) {
     ui
       .takeScreenshot()
       .then(frame => {
-        ui.setUserText(text);
         return makeGenerateCall(text, frame);
       })
       .then(res => {
         ui.endProgress();
 
         console.log('generate res', res);
+        ui.setUserSpeakingText(text);
 
         return asyncPlayFromUrl(res.audio_file)
           .then(() => {
@@ -179,7 +179,7 @@ function processAudioBlob(blob) {
     .then(res => {
       console.log('transcription res', res);
       const transcription = res.transcription;
-      ui.setUserText(transcription);
+      ui.setUserGeneratingText(transcription);
       return asyncGenerateAndPlayUtterance(transcription);
     })
     .then(() => {
@@ -191,9 +191,8 @@ function processAudioBlob(blob) {
     .catch(e => {
       console.log('post error', e);
       ui.endProgress();
-      // ui.setUserText('Error processing audio.');
       // handleAudioProcessingError(e);
-      const message = `Unfortunately, I was unable to transcribe that audio. Please try again.`;
+      const message = `Oops, something went wrong. Please try again.`;
       asyncGenerateAndPlayUtterance(message)
         .then(() => {
           ui.setMessageText('');
@@ -286,7 +285,7 @@ function setupMediaSource(stream) {
       processAudioBlob(blob);
     } else {
       console.log('discarding silent recording');
-      const message = `Unfortunately, I was unable to transcribe that audio. Please try again.`;
+      const message = `I didn't catch that. Please speak loudly and clearly.`;
       asyncGenerateAndPlayUtterance(message)
         .then(() => {
           ui.setMessageText('');

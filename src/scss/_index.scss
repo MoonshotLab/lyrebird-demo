@@ -141,9 +141,12 @@ body#index {
   }
 
   #user-text {
-    &:before,
-    &:after {
-      content: '"';
+    .generating-text,
+    .speaking-text {
+      &:before,
+      &:after {
+        content: '"';
+      }
     }
   }
 

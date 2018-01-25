@@ -16,6 +16,11 @@ const $userText = $('#user-text');
 const $messageText = $('#message-text');
 const $inProgress = $('#in-progress');
 
+const $generatingTextSection = $('#user-text .generating');
+const $userGeneratingText = $('#user-text .generating-text');
+const $speakingTextSection = $('#user-text .speaking');
+const $userSpeakingText = $('#user-text .speaking-text');
+
 const $cameraRoot = $('#camera-root');
 let $cameraCanvas;
 
@@ -124,10 +129,23 @@ function showProcessingStatus() {
   $processingStatus.show();
 }
 
-function setUserText(text) {
+function setUserSpeakingText(text) {
   showStatusSection();
   $('.status').hide();
-  $userText.text(text);
+  $userSpeakingText.text(text);
+  $userGeneratingText.text('');
+  $generatingTextSection.hide();
+  $speakingTextSection.show();
+  $userText.show();
+}
+
+function setUserGeneratingText(text) {
+  showStatusSection();
+  $('.status').hide();
+  $userGeneratingText.text(text);
+  $userSpeakingText.text('');
+  $speakingTextSection.hide();
+  $generatingTextSection.show();
   $userText.show();
 }
 
@@ -172,9 +190,10 @@ exports.endProgress = endProgress;
 exports.takeScreenshot = takeScreenshot;
 exports.setupSpacebarRecord = setupSpacebarRecord;
 exports.setupArduinoButtonRecord = setupArduinoButtonRecord;
-exports.setUserText = setUserText;
 exports.showListeningStatus = showListeningStatus;
 exports.showProcessingStatus = showProcessingStatus;
 exports.setMessageText = setMessageText;
 exports.hideStatusSection = hideStatusSection;
 exports.showStatusSection = showStatusSection;
+exports.setUserSpeakingText = setUserSpeakingText;
+exports.setUserGeneratingText = setUserGeneratingText;

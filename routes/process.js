@@ -7,6 +7,7 @@ const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 const upload = require('multer')({ dest: '/tmp/' });
 const speech = require('@google-cloud/speech');
+const toSentenceCase = require('to-sentence-case');
 
 const speechClient = new speech.SpeechClient();
 
@@ -87,9 +88,15 @@ router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
       .then(transcription => {
         transcription = transcription.trim();
         if (!!transcription && transcription.length > 0) {
-          res.status(200).send({
-            transcription: transcription
-          });
+          try {
+            res.status(200).send({
+              transcription: toSentenceCase(transcription)
+            });
+          } catch (e) {
+            res.status(200).send({
+              transcription: transcription
+            });
+          }
         } else {
           console.log('could not transcribe');
           res.sendStatus(400);
