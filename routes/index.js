@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
   res.render('index', {
     bodyId: 'index',
     foo: app.locals.foo,
-    installation: process.env.CONNECT_TO_ARDUINO === true
+    installation: process.env.CONNECT_TO_ARDUINO == 'true'
   });
 });
 

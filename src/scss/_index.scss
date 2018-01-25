@@ -25,7 +25,25 @@ h6 {
 body#index {
   &.installation {
     cursor: none;
+
+    // #press-record.spacebar {
+    //   display: none;
+    // }
+    //
+    // #press-record.button {
+    //   display: block;
+    // }
   }
+
+  // &:not(.installation) {
+  //   #press-record.button {
+  //     display: none;
+  //   }
+  //
+  //   #press-record.spacebar {
+  //     display: block;
+  //   }
+  // }
 
   section {
     padding: 2.5%;
