@@ -23,7 +23,9 @@ h6 {
 }
 
 body#index {
-  cursor: none;
+  &.installation {
+    cursor: none;
+  }
 
   section {
     padding: 2.5%;

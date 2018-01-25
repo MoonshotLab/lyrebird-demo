@@ -11,7 +11,7 @@ html
     //- include partials/analytics.pug
     //- include partials/socialMeta.pug
     block header_scripts
-  body(id=`${bodyId}`)
+  body(id=`${bodyId}`, class=`${installation ? 'installation' : ''}`)
     main
       block content
       block footer_scripts
