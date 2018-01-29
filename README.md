@@ -3,7 +3,7 @@
 Web app deployed at https://lyrebird-demo.moonshot.cloud/. Speech -> text -> synthesized speech via [Lyrebird](https://lyrebird.ai/). Voice model trained by Jeff King, CEO of [Barkley](https://www.barkleyus.com/).
 
 ### Notes
-* Deployed via Dokku.
+* Deployed via Dokku. Requires the [dokku-apt](https://github.com/F4-Group/dokku-apt) which automatically installs the packages specified in `apt-packages`.
 * Uses Google [Cloud Speech API](https://cloud.google.com/speech/) for transcription.
 * Uses the Lyrebird API which is in limited developer preview.
 * In situ, is triggered by a button via serial-connected Arduino.
