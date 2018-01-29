@@ -1,6 +1,5 @@
 html,
 body {
-  overflow: hidden;
   font-family: 'calluna-sans', sans-serif;
   color: $white;
   height: 100vh;
@@ -23,6 +22,8 @@ h6 {
 }
 
 body#index {
+  overflow: hidden;
+
   &.installation {
     cursor: none;
 
