@@ -87,10 +87,12 @@ function keepAlive() {
 // start screensaver, reset everything
 function goToSleep() {
   screensaver.start();
+  video.setFramesPerCheck(false);
 }
 
 function wakeUp() {
   screensaver.stop();
+  video.setFramesPerCheck(true);
 }
 
 let count = 0;
