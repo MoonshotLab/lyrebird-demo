@@ -6,8 +6,8 @@ let detector;
 let detectorRunning = false;
 let frames = 0;
 
-const awakeFramesPerCheck = 25;
-const asleepFramesPerCheck = 1;
+const awakeFramesPerCheck = 50;
+const asleepFramesPerCheck = 5;
 
 let framesPerCheck = awakeFramesPerCheck;
 
