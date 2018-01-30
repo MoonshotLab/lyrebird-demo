@@ -115,10 +115,13 @@ function stopWatching() {
 function asyncSetupCamera($cameraRoot) {
   return new Promise((resolve, reject) => {
     try {
-      const faceMode = affdex.FaceDetectorMode.LARGE_FACES;
+      // const faceMode = affdex.FaceDetectorMode.LARGE_FACES;
+      const faceMode = affdex.FaceDetectorMode.SMALL_FACES;
 
       // check camera size with https://webrtchacks.github.io/WebRTC-Camera-Resolution/
-      const [width, height] = [1920, 1080];
+      const [width, height] = [640, 480];
+      console.log(`Setting camera resolution at ${width}x${height}`);
+
       detector = new affdex.CameraDetector(
         $cameraRoot[0],
         width,
