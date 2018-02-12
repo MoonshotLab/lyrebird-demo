@@ -111,7 +111,7 @@ router.post('/', upload.fields(uploadFieldSpec), (req, res) => {
         // add to utterance history with screenshot
         db.addUtteranceToHistory({
           utterance: phrase,
-          timestamp: moment(),
+          timestamp: moment().format(),
           screenshot: `https://s3.amazonaws.com/${process.env.S3_BUCKET}/${
             blob.filename
           }`

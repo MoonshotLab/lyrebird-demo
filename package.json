@@ -41,6 +41,7 @@
     "path": "^0.12.7",
     "pug": "^2.0.0-beta11",
     "puppeteer": "^0.12.0",
+    "qs": "^6.5.1",
     "serialport": "^6.0.4",
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
